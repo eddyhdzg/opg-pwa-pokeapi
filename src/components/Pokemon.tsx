@@ -42,47 +42,62 @@ export function Pokemon() {
   };
 
   return (
-    <div className="pokemon-container">
-      <div className="pokemon-card">
-        <div className="pokemon-image-container">
+    <div className="flex flex-col items-center gap-4 p-8">
+      <div className="bg-gray-800 p-8 rounded-2xl shadow-lg">
+        <div className="w-[200px] h-[200px] flex items-center justify-center relative mx-auto">
           {isLoading && (
-            <div className="loading-placeholder">
-              <div className="spinner" />
+            <div className="w-full h-full flex items-center justify-center rounded-2xl">
+              <div className="w-12 h-12 border-4 border-blue-400/20 border-t-blue-400 rounded-full animate-spin" />
             </div>
           )}
           {pokemon && !isLoading && !error && (
             <img
               src={pokemon.sprites.front_default}
               alt={pokemon.name}
-              className="pokemon-image"
+              className="w-full h-full object-contain block"
             />
           )}
         </div>
-        {error && <p>Error loading Pokemon</p>}
-        <div className="pokemon-info">
+        {error && <p className="text-red-500">Error loading Pokemon</p>}
+        <div className="flex flex-col items-center gap-1 my-2 min-h-[3.5em]">
           {isLoading ? (
             <>
-              <div className="pokemon-number">#</div>
-              <div className="text-placeholder">Loading...</div>
+              <div className="text-base text-blue-400/80 h-[1.2em] leading-[1.2em] min-w-[2em] text-center">
+                #
+              </div>
+              <div className="h-[1.5em] leading-[1.5em] text-blue-400/70 text-2xl min-w-[6em] text-center">
+                Loading...
+              </div>
             </>
           ) : (
             pokemon &&
             !error && (
               <>
-                <div className="pokemon-number">
+                <div className="text-base text-blue-400/80 h-[1.2em] leading-[1.2em] min-w-[2em] text-center">
                   #{pokemon.id.toString().padStart(3, "0")}
                 </div>
-                <h2>{pokemon.name}</h2>
+                <h2 className="m-0 text-2xl h-[1.5em] leading-[1.5em] capitalize min-w-[6em] text-center">
+                  {pokemon.name}
+                </h2>
               </>
             )
           )}
         </div>
       </div>
-      <div className="controls">
-        <button onClick={handlePrevious} disabled={pokemonId <= 1}>
+      <div className="flex gap-4 mt-4">
+        <button
+          onClick={handlePrevious}
+          disabled={pokemonId <= 1}
+          className="px-4 py-2 text-base bg-blue-400 border-none rounded-lg text-gray-900 cursor-pointer transition-colors hover:bg-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        >
           Previous
         </button>
-        <button onClick={handleNext}>Next</button>
+        <button
+          onClick={handleNext}
+          className="px-4 py-2 text-base bg-blue-400 border-none rounded-lg text-gray-900 cursor-pointer transition-colors hover:bg-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
