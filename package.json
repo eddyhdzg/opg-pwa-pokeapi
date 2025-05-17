@@ -12,6 +12,8 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
+    "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
     "pokeapi": "^0.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

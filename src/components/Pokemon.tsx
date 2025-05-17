@@ -50,6 +50,16 @@ export function Pokemon() {
             pokemon.name
           }`}</title>
           <meta
+            name="description"
+            content={`View details for ${pokemon.name}, Pokemon #${pokemon.id
+              .toString()
+              .padStart(3, "0")}`}
+          />
+
+          {/* Open Graph / Facebook */}
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content={window.location.href} />
+          <meta
             property="og:title"
             content={`#${pokemon.id.toString().padStart(3, "0")} ${
               pokemon.name
@@ -62,8 +72,25 @@ export function Pokemon() {
               .padStart(3, "0")}`}
           />
           <meta property="og:image" content={pokemon.sprites.front_default} />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={window.location.href} />
+          <meta property="og:image:width" content="475" />
+          <meta property="og:image:height" content="475" />
+
+          {/* Twitter */}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:url" content={window.location.href} />
+          <meta
+            name="twitter:title"
+            content={`#${pokemon.id.toString().padStart(3, "0")} ${
+              pokemon.name
+            }`}
+          />
+          <meta
+            name="twitter:description"
+            content={`View details for ${pokemon.name}, Pokemon #${pokemon.id
+              .toString()
+              .padStart(3, "0")}`}
+          />
+          <meta name="twitter:image" content={pokemon.sprites.front_default} />
         </Helmet>
       )}
       <div className="flex flex-col items-center gap-4 p-8">
