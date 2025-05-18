@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
+import SEO from "./SEO";
 
 interface PokemonData {
   name: string;
@@ -42,57 +42,33 @@ export function Pokemon() {
     navigate(`/${pokemonId + 1}`);
   };
 
+  const pokemonTitle = pokemon
+    ? `#${pokemon.id.toString().padStart(3, "0")} ${pokemon.name}`
+    : "Loading Pokemon...";
+  const pokemonDescription = pokemon
+    ? `View details for ${pokemon.name}, Pokemon #${pokemon.id
+        .toString()
+        .padStart(3, "0")}`
+    : "Loading Pokemon details...";
+
   return (
     <>
-      {pokemon && !isLoading && !error && (
-        <Helmet>
-          <title>{`#${pokemon.id.toString().padStart(3, "0")} ${
-            pokemon.name
-          }`}</title>
-          <meta
-            name="description"
-            content={`View details for ${pokemon.name}, Pokemon #${pokemon.id
-              .toString()
-              .padStart(3, "0")}`}
-          />
-
-          {/* Open Graph / Facebook */}
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content={window.location.href} />
-          <meta
-            property="og:title"
-            content={`#${pokemon.id.toString().padStart(3, "0")} ${
-              pokemon.name
-            }`}
-          />
-          <meta
-            property="og:description"
-            content={`View details for ${pokemon.name}, Pokemon #${pokemon.id
-              .toString()
-              .padStart(3, "0")}`}
-          />
-          <meta property="og:image" content={pokemon.sprites.front_default} />
-          <meta property="og:image:width" content="475" />
-          <meta property="og:image:height" content="475" />
-
-          {/* Twitter */}
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:url" content={window.location.href} />
-          <meta
-            name="twitter:title"
-            content={`#${pokemon.id.toString().padStart(3, "0")} ${
-              pokemon.name
-            }`}
-          />
-          <meta
-            name="twitter:description"
-            content={`View details for ${pokemon.name}, Pokemon #${pokemon.id
-              .toString()
-              .padStart(3, "0")}`}
-          />
-          <meta name="twitter:image" content={pokemon.sprites.front_default} />
-        </Helmet>
-      )}
+      <SEO
+        title={pokemonTitle}
+        description={pokemonDescription}
+        image={pokemon?.sprites.front_default}
+        url={window.location.href}
+        type="website"
+        twitterCard="summary_large_image"
+        keywords={[
+          "pokemon",
+          pokemon?.name || "",
+          `pokemon #${pokemon?.id || ""}`,
+          "pokemon details",
+          "pokemon stats",
+          "pokemon database",
+        ].filter(Boolean)}
+      />
       <div className="flex flex-col items-center gap-4 p-8">
         <div className="bg-gray-800 p-8 rounded-2xl shadow-lg">
           <div className="w-[200px] h-[200px] flex items-center justify-center relative mx-auto">
@@ -106,6 +82,7 @@ export function Pokemon() {
                 src={pokemon.sprites.front_default}
                 alt={pokemon.name}
                 className="w-full h-full object-contain block"
+                crossOrigin="anonymous"
               />
             )}
           </div>
