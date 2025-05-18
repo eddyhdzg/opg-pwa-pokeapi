@@ -33,9 +33,11 @@ const SEO: React.FC<SEOProps> = ({
       ? window.location.href
       : "https://pokemon-pwa.com");
 
-  // Convert relative image URL to absolute URL
+  // Handle Pokemon sprite URLs
   const absoluteImageUrl = image
     ? image.startsWith("http")
+      ? image
+      : image.startsWith("data:")
       ? image
       : `${window.location.origin}${image}`
     : `${window.location.origin}/pokemon-default.jpg`;
@@ -54,6 +56,7 @@ const SEO: React.FC<SEOProps> = ({
         "og:type": type,
         "og:url": currentUrl,
         "og:image": absoluteImageUrl,
+        "og:image:secure_url": absoluteImageUrl,
         "twitter:card": twitterCard,
         "twitter:title": formattedTitle,
         "twitter:description": description,
@@ -105,6 +108,7 @@ const SEO: React.FC<SEOProps> = ({
       <meta property="og:image" content={absoluteImageUrl} />
       <meta property="og:image:width" content="475" />
       <meta property="og:image:height" content="475" />
+      <meta property="og:image:secure_url" content={absoluteImageUrl} />
 
       {/* Twitter Meta Tags */}
       <meta name="twitter:card" content={twitterCard} />

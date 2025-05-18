@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import SEO from "./SEO";
 
 interface PokemonData {
@@ -22,8 +22,8 @@ async function fetchPokemon(id: number): Promise<PokemonData> {
 export function Pokemon() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const pokemonId = Number(id) || 1;
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const {
     data: pokemon,
@@ -53,48 +53,14 @@ export function Pokemon() {
         .padStart(3, "0")}`
     : "Loading Pokemon details...";
 
-  // Force meta tag updates when route changes
+  // Preload the Pokemon image
   useEffect(() => {
-    if (pokemon) {
-      const absoluteImageUrl = pokemon.sprites.front_default;
-      const currentUrl = window.location.href;
-
-      // Update meta tags
-      const metaTags = {
-        "og:title": pokemonTitle,
-        "og:description": pokemonDescription,
-        "og:type": "website",
-        "og:url": currentUrl,
-        "og:image": absoluteImageUrl,
-        "twitter:card": "summary_large_image",
-        "twitter:title": pokemonTitle,
-        "twitter:description": pokemonDescription,
-        "twitter:image": absoluteImageUrl,
-        "twitter:url": currentUrl,
-        description: pokemonDescription,
-      };
-
-      // Update or create meta tags
-      Object.entries(metaTags).forEach(([name, content]) => {
-        let meta = document.querySelector(
-          `meta[property="${name}"], meta[name="${name}"]`
-        );
-        if (!meta) {
-          meta = document.createElement("meta");
-          if (name.startsWith("og:")) {
-            meta.setAttribute("property", name);
-          } else {
-            meta.setAttribute("name", name);
-          }
-          document.head.appendChild(meta);
-        }
-        meta.setAttribute("content", content);
-      });
-
-      // Update title
-      document.title = pokemonTitle;
+    if (pokemon?.sprites.front_default) {
+      const img = new Image();
+      img.src = pokemon.sprites.front_default;
+      img.onload = () => setImageLoaded(true);
     }
-  }, [pokemon, pokemonTitle, pokemonDescription, location.pathname]);
+  }, [pokemon?.sprites.front_default]);
 
   return (
     <>
@@ -128,6 +94,7 @@ export function Pokemon() {
                 alt={pokemon.name}
                 className="w-full h-full object-contain block"
                 crossOrigin="anonymous"
+                onLoad={() => setImageLoaded(true)}
               />
             )}
           </div>
