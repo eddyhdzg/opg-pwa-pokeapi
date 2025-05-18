@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import { useLocation } from "react-router-dom";
 
 interface SEOProps {
   title?: string;
@@ -20,109 +20,47 @@ const SEO: React.FC<SEOProps> = ({
   twitterCard = "summary_large_image",
   keywords = ["pokemon", "pwa", "pokemon api", "pokemon database"],
 }) => {
-  const currentUrl =
-    typeof window !== "undefined"
-      ? window.location.href
-      : "https://pokemon-pwa.com";
+  const location = useLocation();
+  const currentUrl = `https://pokemon-pwa.com${location.pathname}`;
 
-  // Handle Pokemon sprite URLs
+  // Ensure we have an absolute URL for the image
   const absoluteImageUrl = image
     ? image.startsWith("http")
       ? image
-      : image.startsWith("data:")
-      ? image
-      : `${window.location.origin}${image}`
-    : `${window.location.origin}/pokemon-default.jpg`;
-
-  // Update meta tags when URL changes
-  useEffect(() => {
-    // Force meta tag updates
-    const updateMetaTags = () => {
-      // Update title
-      document.title = title;
-
-      // Update meta tags
-      const metaTags = {
-        "og:title": title,
-        "og:description": description,
-        "og:type": type,
-        "og:url": currentUrl,
-        "og:image": absoluteImageUrl,
-        "og:image:secure_url": absoluteImageUrl,
-        "twitter:card": twitterCard,
-        "twitter:title": title,
-        "twitter:description": description,
-        "twitter:image": absoluteImageUrl,
-        "twitter:url": currentUrl,
-        description: description,
-        "og:site_name": name,
-        "og:image:type": "image/png",
-        "og:image:alt": `Image of ${title}`,
-      };
-
-      // Update or create meta tags
-      Object.entries(metaTags).forEach(([name, content]) => {
-        let meta = document.querySelector(
-          `meta[property="${name}"], meta[name="${name}"]`
-        );
-        if (!meta) {
-          meta = document.createElement("meta");
-          if (name.startsWith("og:")) {
-            meta.setAttribute("property", name);
-          } else {
-            meta.setAttribute("name", name);
-          }
-          document.head.appendChild(meta);
-        }
-        meta.setAttribute("content", content);
-      });
-    };
-
-    updateMetaTags();
-  }, [
-    title,
-    description,
-    type,
-    currentUrl,
-    absoluteImageUrl,
-    twitterCard,
-    name,
-  ]);
+      : `https://pokeapi.co${image}`
+    : "https://pokemon-pwa.com/pokemon-default.jpg";
 
   return (
-    <Helmet>
-      {/* Standard metadata tags */}
+    <Helmet prioritizeSeoTags>
+      {/* Primary Meta Tags */}
       <title>{title}</title>
-      <link rel="canonical" href={currentUrl} />
+      <meta name="title" content={title} />
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords.join(", ")} />
 
-      {/* Open Graph tags */}
-      <meta property="og:url" content={currentUrl} />
+      {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
+      <meta property="og:url" content={currentUrl} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:site_name" content={name} />
-
-      {/* OG image tags */}
       <meta property="og:image" content={absoluteImageUrl} />
-      <meta property="og:image:secure_url" content={absoluteImageUrl} />
-      <meta property="og:image:type" content="image/png" />
       <meta property="og:image:width" content="475" />
       <meta property="og:image:height" content="475" />
-      <meta property="og:image:alt" content={`Image of ${title}`} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:alt" content={title} />
+      <meta property="og:site_name" content={name} />
 
-      {/* Twitter tags */}
-      <meta name="twitter:card" content={twitterCard} />
-      <meta name="twitter:creator" content={name} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={absoluteImageUrl} />
-      <meta name="twitter:url" content={currentUrl} />
+      {/* Twitter */}
+      <meta property="twitter:card" content={twitterCard} />
+      <meta property="twitter:url" content={currentUrl} />
+      <meta property="twitter:title" content={title} />
+      <meta property="twitter:description" content={description} />
+      <meta property="twitter:image" content={absoluteImageUrl} />
 
       {/* Additional Meta Tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+      <link rel="canonical" href={currentUrl} />
     </Helmet>
   );
 };
