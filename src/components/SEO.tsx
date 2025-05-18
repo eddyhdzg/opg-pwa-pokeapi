@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 interface SEOProps {
   title?: string;
@@ -43,35 +43,55 @@ const SEO: React.FC<SEOProps> = ({
   // Update meta tags when URL changes
   useEffect(() => {
     // Force meta tag updates
-    const metaTags = document.getElementsByTagName("meta");
-    for (let i = 0; i < metaTags.length; i++) {
-      const tag = metaTags[i];
-      if (tag.getAttribute("property") === "og:url") {
-        tag.setAttribute("content", currentUrl);
-      }
-      if (tag.getAttribute("name") === "twitter:url") {
-        tag.setAttribute("content", currentUrl);
-      }
-      if (tag.getAttribute("property") === "og:image") {
-        tag.setAttribute("content", absoluteImageUrl);
-      }
-      if (tag.getAttribute("name") === "twitter:image") {
-        tag.setAttribute("content", absoluteImageUrl);
-      }
-    }
-  }, [currentUrl, absoluteImageUrl]);
+    const updateMetaTags = () => {
+      // Update title
+      document.title = formattedTitle;
+
+      // Update meta tags
+      const metaTags = {
+        "og:title": formattedTitle,
+        "og:description": description,
+        "og:type": type,
+        "og:url": currentUrl,
+        "og:image": absoluteImageUrl,
+        "twitter:card": twitterCard,
+        "twitter:title": formattedTitle,
+        "twitter:description": description,
+        "twitter:image": absoluteImageUrl,
+        "twitter:url": currentUrl,
+        description: description,
+      };
+
+      // Update or create meta tags
+      Object.entries(metaTags).forEach(([name, content]) => {
+        let meta = document.querySelector(
+          `meta[property="${name}"], meta[name="${name}"]`
+        );
+        if (!meta) {
+          meta = document.createElement("meta");
+          if (name.startsWith("og:")) {
+            meta.setAttribute("property", name);
+          } else {
+            meta.setAttribute("name", name);
+          }
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute("content", content);
+      });
+    };
+
+    updateMetaTags();
+  }, [
+    formattedTitle,
+    description,
+    type,
+    currentUrl,
+    absoluteImageUrl,
+    twitterCard,
+  ]);
 
   return (
-    <Helmet
-      titleTemplate={titleTemplate}
-      defaultTitle={defaultTitle}
-      onChangeClientState={(newState) => {
-        // Force update meta tags
-        if (newState.title) {
-          document.title = newState.title;
-        }
-      }}
-    >
+    <Helmet titleTemplate={titleTemplate} defaultTitle={defaultTitle}>
       {/* Basic Meta Tags */}
       <title>{formattedTitle}</title>
       <meta name="description" content={description} />
