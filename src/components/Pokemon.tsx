@@ -68,7 +68,7 @@ export function Pokemon() {
         title={pokemonTitle}
         description={pokemonDescription}
         image={pokemon?.sprites.front_default}
-        url={window.location.href}
+        name="Pokemon Viewer"
         type="website"
         twitterCard="summary_large_image"
         keywords={[

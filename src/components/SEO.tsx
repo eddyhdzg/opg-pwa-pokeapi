@@ -3,35 +3,27 @@ import { Helmet } from "react-helmet-async";
 
 interface SEOProps {
   title?: string;
-  titleTemplate?: string;
-  defaultTitle?: string;
   description?: string;
-  keywords?: string[];
   image?: string;
-  url?: string;
+  name?: string;
   type?: "website" | "article";
   twitterCard?: "summary" | "summary_large_image";
+  keywords?: string[];
 }
 
 const SEO: React.FC<SEOProps> = ({
-  title,
-  titleTemplate = "%s | Pokemon Viewer",
-  defaultTitle = "Pokemon Viewer",
-  description = "A Progressive Web App for exploring Pokemon data",
-  keywords = ["pokemon", "pwa", "pokemon api", "pokemon database"],
+  title = "Pokemon Viewer",
+  description = "Explore the world of Pokemon with our interactive Pokedex",
   image,
-  url,
+  name = "Pokemon Viewer",
   type = "website",
   twitterCard = "summary_large_image",
+  keywords = ["pokemon", "pwa", "pokemon api", "pokemon database"],
 }) => {
-  const formattedTitle = title
-    ? titleTemplate.replace("%s", title)
-    : defaultTitle;
   const currentUrl =
-    url ||
-    (typeof window !== "undefined"
+    typeof window !== "undefined"
       ? window.location.href
-      : "https://pokemon-pwa.com");
+      : "https://pokemon-pwa.com";
 
   // Handle Pokemon sprite URLs
   const absoluteImageUrl = image
@@ -47,22 +39,25 @@ const SEO: React.FC<SEOProps> = ({
     // Force meta tag updates
     const updateMetaTags = () => {
       // Update title
-      document.title = formattedTitle;
+      document.title = title;
 
       // Update meta tags
       const metaTags = {
-        "og:title": formattedTitle,
+        "og:title": title,
         "og:description": description,
         "og:type": type,
         "og:url": currentUrl,
         "og:image": absoluteImageUrl,
         "og:image:secure_url": absoluteImageUrl,
         "twitter:card": twitterCard,
-        "twitter:title": formattedTitle,
+        "twitter:title": title,
         "twitter:description": description,
         "twitter:image": absoluteImageUrl,
         "twitter:url": currentUrl,
         description: description,
+        "og:site_name": name,
+        "og:image:type": "image/png",
+        "og:image:alt": `Image of ${title}`,
       };
 
       // Update or create meta tags
@@ -85,34 +80,42 @@ const SEO: React.FC<SEOProps> = ({
 
     updateMetaTags();
   }, [
-    formattedTitle,
+    title,
     description,
     type,
     currentUrl,
     absoluteImageUrl,
     twitterCard,
+    name,
   ]);
 
   return (
-    <Helmet titleTemplate={titleTemplate} defaultTitle={defaultTitle}>
-      {/* Basic Meta Tags */}
-      <title>{formattedTitle}</title>
+    <Helmet>
+      {/* Standard metadata tags */}
+      <title>{title}</title>
+      <link rel="canonical" href={currentUrl} />
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords.join(", ")} />
 
-      {/* Open Graph Meta Tags */}
-      <meta property="og:title" content={formattedTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:type" content={type} />
+      {/* Open Graph tags */}
       <meta property="og:url" content={currentUrl} />
+      <meta property="og:type" content={type} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:site_name" content={name} />
+
+      {/* OG image tags */}
       <meta property="og:image" content={absoluteImageUrl} />
+      <meta property="og:image:secure_url" content={absoluteImageUrl} />
+      <meta property="og:image:type" content="image/png" />
       <meta property="og:image:width" content="475" />
       <meta property="og:image:height" content="475" />
-      <meta property="og:image:secure_url" content={absoluteImageUrl} />
+      <meta property="og:image:alt" content={`Image of ${title}`} />
 
-      {/* Twitter Meta Tags */}
+      {/* Twitter tags */}
       <meta name="twitter:card" content={twitterCard} />
-      <meta name="twitter:title" content={formattedTitle} />
+      <meta name="twitter:creator" content={name} />
+      <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={absoluteImageUrl} />
       <meta name="twitter:url" content={currentUrl} />
@@ -120,7 +123,6 @@ const SEO: React.FC<SEOProps> = ({
       {/* Additional Meta Tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-      <link rel="canonical" href={currentUrl} />
     </Helmet>
   );
 };
